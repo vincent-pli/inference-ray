@@ -1,0 +1,7 @@
+A syntax error happened on llmserve/api/cli.py. This file cannot be formatted.
+Check https://github.com/pydantic/bump-pydantic/issues/124 for more information.
+Syntax Error @ 1:1.
+parser error: error at 1:11: expected one of !=, %, &, (, *, **, +, ,, -, ., /, //, :, ;, <, <<, <=, =, ==, >, >=, >>, @, NEWLINE, [, ^, and, if, in, is, not, or, |
+
+Whether to print metadata
+^

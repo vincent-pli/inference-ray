@@ -1,0 +1,64 @@
+Metadata-Version: 2.1
+Name: llm-serve
+Version: 0.0.1
+Summary: An LLM inference solution to quickly deploy productive LLM service
+Author: llm-serve authors
+Author-email: jasonhe258@163.com
+Requires-Python: >=3.10
+License-File: LICENSE
+Requires-Dist: typer>=0.9
+Requires-Dist: rich
+Provides-Extra: backend
+Requires-Dist: async_timeout; extra == "backend"
+Requires-Dist: datasets; extra == "backend"
+Requires-Dist: ftfy; extra == "backend"
+Requires-Dist: tensorboard; extra == "backend"
+Requires-Dist: sentencepiece; extra == "backend"
+Requires-Dist: Jinja2; extra == "backend"
+Requires-Dist: numexpr>=2.7.3; extra == "backend"
+Requires-Dist: hf_transfer; extra == "backend"
+Requires-Dist: evaluate; extra == "backend"
+Requires-Dist: bitsandbytes; extra == "backend"
+Requires-Dist: numpy<1.24; extra == "backend"
+Requires-Dist: ninja; extra == "backend"
+Requires-Dist: protobuf<3.21.0; extra == "backend"
+Requires-Dist: optimum; extra == "backend"
+Requires-Dist: safetensors; extra == "backend"
+Requires-Dist: pydantic==2.7.1; extra == "backend"
+Requires-Dist: einops; extra == "backend"
+Requires-Dist: markdown-it-py[plugins]; extra == "backend"
+Requires-Dist: scipy==1.11.1; extra == "backend"
+Requires-Dist: jieba==0.42.1; extra == "backend"
+Requires-Dist: rouge_chinese==1.0.3; extra == "backend"
+Requires-Dist: nltk==3.8.1; extra == "backend"
+Requires-Dist: sqlalchemy==1.4.41; extra == "backend"
+Requires-Dist: typing-extensions>=4.6.1; extra == "backend"
+Requires-Dist: linkify-it-py==2.0.2; extra == "backend"
+Requires-Dist: markdown-it-py==2.2.0; extra == "backend"
+Requires-Dist: gradio; extra == "backend"
+Requires-Dist: httpx[socks]==0.23.3; extra == "backend"
+Requires-Dist: torch==2.2.1; extra == "backend"
+Requires-Dist: torchaudio; extra == "backend"
+Requires-Dist: torchvision; extra == "backend"
+Requires-Dist: accelerate==0.25.0; extra == "backend"
+Requires-Dist: deepspeed==0.14.0; extra == "backend"
+Requires-Dist: torchmetrics==1.2.1; extra == "backend"
+Requires-Dist: llama_cpp_python==0.2.57; extra == "backend"
+Requires-Dist: transformers==4.40.0; extra == "backend"
+Requires-Dist: ray[serve]==2.20.0; extra == "backend"
+Provides-Extra: vllm
+Requires-Dist: vllm==0.4.1; extra == "vllm"
+Provides-Extra: frontend
+Requires-Dist: gradio; extra == "frontend"
+Requires-Dist: aiorwlock; extra == "frontend"
+Requires-Dist: pymongo; extra == "frontend"
+Requires-Dist: pandas; extra == "frontend"
+Requires-Dist: boto3; extra == "frontend"
+Provides-Extra: dev
+Requires-Dist: pre-commit; extra == "dev"
+Requires-Dist: ruff==0.0.270; extra == "dev"
+Requires-Dist: black==23.3.0; extra == "dev"
+Provides-Extra: test
+Requires-Dist: pytest; extra == "test"
+Provides-Extra: docs
+Requires-Dist: mkdocs-material; extra == "docs"

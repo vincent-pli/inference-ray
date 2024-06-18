@@ -1,0 +1,106 @@
+apiVersion: ray.io/v1alpha1
+kind: RayCluster
+metadata:
+  labels:
+    controller-tools.k8s.io: "1.0"
+  name: opencsg
+  namespace: opencsg
+spec:
+  rayVersion: '2.20.0' # should match the Ray version in the image of the containers
+  enableInTreeAutoscaling: true
+  # Ray head pod template
+  headGroupSpec:
+    # The `rayStartParams` are used to configure the `ray start` command.
+    # See https://github.com/ray-project/kuberay/blob/master/docs/guidance/rayStartParams.md for the default settings of `rayStartParams` in KubeRay.
+    # See https://docs.ray.io/en/latest/cluster/cli.html#ray-start for all available options in `rayStartParams`.
+    rayStartParams:
+      resources: '"{\"accelerator_type_cpu\": 2}"'
+      dashboard-host: '0.0.0.0'
+      dashboard-port: '8265'
+      num-gpus: "0"
+      num-cpus: "0"
+    #pod template
+    template:
+      spec:
+        containers:
+        - name: ray-head
+          env:
+            - name: RAY_enable_autoscaler_v2
+              value: "1"
+          image: opencsg/llm-inference:0.1.0-50665935ab2c
+          resources:
+            limits:
+              cpu: 2
+              memory: 4Gi
+              nvidia.com/gpu: 0
+            requests:
+              cpu: 2
+              memory: 4Gi
+              nvidia.com/gpu: 0
+          ports:
+          - containerPort: 6379
+            name: gcs-server
+          - containerPort: 8265 # Ray dashboard
+            name: dashboard
+          - containerPort: 10001
+            name: client
+          - containerPort: 8000
+            name: serveport
+          volumeMounts:
+          - name: local-model
+            mountPath: /tmp/hub
+          #- name: local-yaml
+          #  mountPath: /home/ray/models
+        volumes:
+        - name: local-model
+          hostPath:
+            path: /data/minio/huggingface/hub
+        #- name: local-yaml
+        #  hostPath:
+        #    path: /data/minio/yaml
+  workerGroupSpecs:
+  # the pod replicas in this group typed worker
+  - replicas: 1
+    minReplicas: 1
+    maxReplicas: 5
+    # logical group name, for this called small-group, also can be functional
+    groupName: ray-node
+    rayStartParams:
+      resources: '"{\"accelerator_type_cpu\": 4, \"accelerator_type_gpu\": 1}"'
+    #pod template
+    template:
+      spec:
+        containers:
+        - name: llm
+          image: opencsg/llm-inference:0.1.0-50665935ab2c
+          lifecycle:
+            preStop:
+              exec:
+                command: ["/bin/sh","-c","ray stop"]
+          resources:
+            limits:
+              cpu: 2
+              memory: 8Gi
+              #nvidia.com/gpu: 1
+            requests:
+              cpu: 2
+              memory: 8Gi
+              #nvidia.com/gpu: 1
+          volumeMounts:
+          - name: local-model
+            mountPath: /tmp/hub
+          #- name: local-yaml
+          #  mountPath: /home/ray/models
+        volumes:
+        - name: local-model
+          hostPath:
+            path: /data/minio/huggingface/hub
+        #- name: local-yaml
+        #  hostPath:
+        #    path: /data/minio/yaml
+        # Please add the following taints to the GPU node.
+        tolerations:
+          - key: "ray.io/node-type"
+            operator: "Equal"
+            value: "worker"
+            effect: "NoSchedule"

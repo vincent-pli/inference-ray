@@ -1,0 +1,30 @@
+deployment_config:
+  max_ongoing_requests: 1
+  autoscaling_config:
+    min_replicas: 1
+    initial_replicas: 1
+    max_replicas: 8
+    target_ongoing_requests: 1.0
+    metrics_interval_s: 10.0
+    look_back_period_s: 30.0
+    smoothing_factor: 1.0
+    downscale_delay_s: 300.0
+    upscale_delay_s: 90.0
+  ray_actor_options:
+    num_cpus: 0.1    # for a model deployment, we have 3 actor created, 1 and 2 will cost 0.1 cpu, and the model infrence will cost 6(see the setting in the end of the file)
+model_conf:
+  warmup: True
+  model_task: image-to-text
+  model_id: nlpconnect/vit-gpt2-image-captioning
+  max_input_words: 800
+  initialization:
+    initializer:
+      type: SingleDevice
+      dtype: float32
+      from_pretrained_kwargs:
+        trust_remote_code: true
+    pipeline: defaulttransformers
+scaling_config:
+  num_workers: 1
+  num_gpus_per_worker: 0
+  num_cpus_per_worker: 4   # for infrence

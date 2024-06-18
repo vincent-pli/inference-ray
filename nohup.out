@@ -1,0 +1,31 @@
+Xray 1.5.9 (Xray, Penetrates Everything.) Custom (go1.18.4 darwin/arm64)
+A unified platform for anti-censorship.
+Xray 1.5.9 (Xray, Penetrates Everything.) Custom (go1.18.4 darwin/arm64)
+A unified platform for anti-censorship.
+Xray 1.5.9 (Xray, Penetrates Everything.) Custom (go1.18.4 darwin/arm64)
+A unified platform for anti-censorship.
+Xray 1.5.9 (Xray, Penetrates Everything.) Custom (go1.18.4 darwin/arm64)
+A unified platform for anti-censorship.
+2024/05/07 17:24:50 [Info] infra/conf/serial: Reading config: /Users/lipeng/daily/config_azure.json
+Failed to start: app/proxyman/inbound: failed to listen TCP on 2080 > transport/internet: failed to listen on address: 127.0.0.1:2080 > transport/internet/tcp: failed to listen TCP on 127.0.0.1:2080 > listen tcp 127.0.0.1:2080: bind: address already in use
+2024/05/07 17:24:50 [Info] infra/conf/serial: Reading config: /Users/lipeng/daily/config.json
+Failed to start: app/proxyman/inbound: failed to listen TCP on 2080 > transport/internet: failed to listen on address: 127.0.0.1:2080 > transport/internet/tcp: failed to listen TCP on 127.0.0.1:2080 > listen tcp 127.0.0.1:2080: bind: address already in use
+2024/05/07 17:24:50 [Info] infra/conf/serial: Reading config: /Users/lipeng/daily/config_azure.json
+Failed to start: app/proxyman/inbound: failed to listen TCP on 3080 > transport/internet: failed to listen on address: 127.0.0.1:3080 > transport/internet/tcp: failed to listen TCP on 127.0.0.1:3080 > listen tcp 127.0.0.1:3080: bind: address already in use
+Failed to start: app/proxyman/inbound: failed to listen TCP on 3080 > transport/internet: failed to listen on address: 127.0.0.1:3080 > transport/internet/tcp: failed to listen TCP on 127.0.0.1:3080 > listen tcp 127.0.0.1:3080: bind: address already in use
+Xray 1.5.9 (Xray, Penetrates Everything.) Custom (go1.18.4 darwin/arm64)
+Xray 1.5.9 (Xray, Penetrates Everything.) Custom (go1.18.4 darwin/arm64)
+A unified platform for anti-censorship.
+Xray 1.5.9 (Xray, Penetrates Everything.) Custom (go1.18.4 darwin/arm64)
+A unified platform for anti-censorship.
+Xray 1.5.9 (Xray, Penetrates Everything.) Custom (go1.18.4 darwin/arm64)
+A unified platform for anti-censorship.
+2024/06/11 17:25:13 [Info] infra/conf/serial: Reading config: /Users/lipeng/daily/config_azure.json
+A unified platform for anti-censorship.
+2024/06/11 17:25:13 [Info] infra/conf/serial: Reading config: /Users/lipeng/daily/config.json
+2024/06/11 17:25:13 [Info] infra/conf/serial: Reading config: /Users/lipeng/daily/config_azure.json
+2024/06/11 17:25:13 [Info] infra/conf/serial: Reading config: /Users/lipeng/daily/config.json
+Failed to start: app/proxyman/inbound: failed to listen TCP on 2080 > transport/internet: failed to listen on address: 127.0.0.1:2080 > transport/internet/tcp: failed to listen TCP on 127.0.0.1:2080 > listen tcp 127.0.0.1:2080: bind: address already in use
+Failed to start: app/proxyman/inbound: failed to listen TCP on 2080 > transport/internet: failed to listen on address: 127.0.0.1:2080 > transport/internet/tcp: failed to listen TCP on 127.0.0.1:2080 > listen tcp 127.0.0.1:2080: bind: address already in use
+Failed to start: app/proxyman/inbound: failed to listen TCP on 3080 > transport/internet: failed to listen on address: 127.0.0.1:3080 > transport/internet/tcp: failed to listen TCP on 127.0.0.1:3080 > listen tcp 127.0.0.1:3080: bind: address already in use
+Failed to start: app/proxyman/inbound: failed to listen TCP on 3080 > transport/internet: failed to listen on address: 127.0.0.1:3080 > transport/internet/tcp: failed to listen TCP on 127.0.0.1:3080 > listen tcp 127.0.0.1:3080: bind: address already in use

@@ -1,0 +1,80 @@
+{
+  "I am going to do": [
+    {
+      "model": "facebook/opt-125m",
+      "result": {
+        "generated_text": " this.  I just need some more information about the job and what it is like.\nI'm a freelance writer, but I have a very specific project I want to get into.  It's something I'm passionate about.\nYou should check out my blog.  I'm writing a story about how to be a writer in the future.  If you want to see more of my work I'll be in touch with you soon!",
+        "num_input_tokens": 6,
+        "num_input_tokens_batch": 12,
+        "num_generated_tokens": 352,
+        "num_generated_tokens_batch": 856,
+        "preprocessing_time": 0.00047237519174814224,
+        "generation_time": 253000795.695981,
+        "postprocessing_time": null,
+        "generation_time_per_token": 706706.1332289972,
+        "generation_time_per_token_batch": 291475.5710783191,
+        "num_total_tokens": 358,
+        "num_total_tokens_batch": 868,
+        "total_time": null,
+        "total_time_per_token": null,
+        "total_time_per_token_batch": null
+      },
+      "stats": {
+        "generated_text": " this.  I just need some more information about the job and what it is like.\nI'm a freelance writer, but I have a very specific project I want to get into.  It's something I'm passionate about.\nYou should check out my blog.  I'm writing a story about how to be a writer in the future.  If you want to see more of my work I'll be in touch with you soon!",
+        "num_input_tokens": 6,
+        "num_input_tokens_batch": 12,
+        "num_generated_tokens": 352,
+        "num_generated_tokens_batch": 856,
+        "preprocessing_time": 0.00047237519174814224,
+        "generation_time": 253000795.695981,
+        "postprocessing_time": null,
+        "generation_time_per_token": 706706.1332289972,
+        "generation_time_per_token_batch": 291475.5710783191,
+        "num_total_tokens": 358,
+        "num_total_tokens_batch": 868,
+        "total_time": null,
+        "total_time_per_token": null,
+        "total_time_per_token_batch": null
+      }
+    }
+  ],
+  "I like to eat": [
+    {
+      "model": "facebook/opt-125m",
+      "result": {
+        "generated_text": "akit. I also like to make a lot of meat. I have to say that eating kimchi is one of the best things about being a vegan. It makes me feel better knowing I'm not the only person who has to eat meat all the time.\nI think you're right, it's nice to know that there are people out there who don't eat meat all the time, and they don't want to be bothered by the stigma around it.\nIt's good to know there are people out there who don't eat meat all the time.  It's hard for me to believe that they wouldn't be",
+        "num_input_tokens": 6,
+        "num_input_tokens_batch": 12,
+        "num_generated_tokens": 504,
+        "num_generated_tokens_batch": 856,
+        "preprocessing_time": 0.00047237519174814224,
+        "generation_time": 253000795.695981,
+        "postprocessing_time": null,
+        "generation_time_per_token": 496079.99156074703,
+        "generation_time_per_token_batch": 291475.5710783191,
+        "num_total_tokens": 510,
+        "num_total_tokens_batch": 868,
+        "total_time": null,
+        "total_time_per_token": null,
+        "total_time_per_token_batch": null
+      },
+      "stats": {
+        "generated_text": "akit. I also like to make a lot of meat. I have to say that eating kimchi is one of the best things about being a vegan. It makes me feel better knowing I'm not the only person who has to eat meat all the time.\nI think you're right, it's nice to know that there are people out there who don't eat meat all the time, and they don't want to be bothered by the stigma around it.\nIt's good to know there are people out there who don't eat meat all the time.  It's hard for me to believe that they wouldn't be",
+        "num_input_tokens": 6,
+        "num_input_tokens_batch": 12,
+        "num_generated_tokens": 504,
+        "num_generated_tokens_batch": 856,
+        "preprocessing_time": 0.00047237519174814224,
+        "generation_time": 253000795.695981,
+        "postprocessing_time": null,
+        "generation_time_per_token": 496079.99156074703,
+        "generation_time_per_token_batch": 291475.5710783191,
+        "num_total_tokens": 510,
+        "num_total_tokens_batch": 868,
+        "total_time": null,
+        "total_time_per_token": null,
+        "total_time_per_token_batch": null
+      }
+    }
+  ]
+}
