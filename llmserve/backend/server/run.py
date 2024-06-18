@@ -82,6 +82,8 @@ def llm_server(args: Union[str, LLMApp, List[Union[LLMApp, str]]]):
                 "specify initialization.hf_model_id in the model config."
             )
         logger.info(f"Initializing LLM app {model.model_dump_json(indent=2)}")
+        # user_config is one of the parameter for ray.deployment.option(), it will trigger reconfigure() in the ray deplyment 
+        # and set user_config as it's param
         user_config = model.model_dump()
         deployment_config = model.deployment_config.model_dump()
         model_configs[model.model_conf.model_id] = model
@@ -89,10 +91,11 @@ def llm_server(args: Union[str, LLMApp, List[Union[LLMApp, str]]]):
 
         # if user_config.get("model_config", {}).get("initialization", {}).get("initializer", {}).get("type", None) == "Vllm" and user_config.get("model_config", {}).get("initialization", {}).get("runtime_env", None):
         #     deployment_config["ray_actor_options"]["runtime_env"] = user_config.get("model_config", {}).get("initialization", {}).get("runtime_env", None)
-        max_ongoing_requests = deployment_config.pop(
-            "max_ongoing_requests", None
-        ) or user_config.get("model_conf", {}).get("generation", {}).get("max_batch_size", 1)
-
+        # max_ongoing_requests = deployment_config.pop(
+        #     "max_ongoing_requests", None
+        # ) or user_config.get("model_conf", {}).get("generation", {}).get("max_batch_size", 1)
+        import math
+        max_ongoing_requests = math.ceil(model.deployment_config.autoscaling_config.target_ongoing_requests * 1.2)
         # deployment_config.pop("ray_actor_options")
         # tp = model.scaling_config.num_workers
         # logger.info(f"Tensor parallelism = {tp}")
@@ -112,16 +115,13 @@ def llm_server(args: Union[str, LLMApp, List[Union[LLMApp, str]]]):
             deployments[model.model_conf.model_id] = VLLMDeployment.options(
                 placement_group_bundles=pg_resources, 
                 placement_group_strategy="STRICT_PACK",
-                # name=_reverse_prefix(model.model_conf.model_id),
-                # max_ongoing_requests=max_ongoing_requests,
-                # user_config=user_config,
-                # **deployment_config,
-            ).bind(user_config)
-            logger.info("------------")
-            logger.info(pg_resources)
-            return deployments[model.model_conf.model_id]
+                name=_reverse_prefix(model.model_conf.model_id),
+                max_ongoing_requests=max_ongoing_requests,
+                user_config=user_config,
+                **deployment_config,
+            ).bind()
+            # return deployments[model.model_conf.model_id]
         else:
-            logger.info("1111111111111")
             deployments[model.model_conf.model_id] = LLMDeployment.options(  # pylint:disable=no-member
                 name=_reverse_prefix(model.model_conf.model_id),
                 max_ongoing_requests=max_ongoing_requests,
@@ -129,11 +129,9 @@ def llm_server(args: Union[str, LLMApp, List[Union[LLMApp, str]]]):
                 **deployment_config,
             ).bind()
 
-    # return RouterDeployment.options(
-    #     name=('+'.join([_reverse_prefix(model.model_conf.model_id) for model in models])) + "-router",
-    #     max_ongoing_requests=max_ongoing_requests,
-    #     **deployment_config,
-    # ).bind(deployments, model_configs)  # pylint:disable=no-member
+    return RouterDeployment.options(
+        name=('+'.join([_reverse_prefix(model.model_conf.model_id) for model in models])) + "-router",
+    ).bind(deployments, model_configs)  # pylint:disable=no-member
 
 
 def llm_experimental(args: Union[str, LLMApp, List[Union[LLMApp, str]]]):

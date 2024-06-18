@@ -583,7 +583,6 @@ class DeploymentConfig(BaseModelExtended):
     # the two version will cause incompatible and get exception: TypeError: BaseModel.validate() takes 2 positional arguments but 3 were given
     # that's why I have to defined our own AutoscalingConfig and I will keep watching ray, after they turn to v2, recover the previously implements
     autoscaling_config: Optional[AutoscalingConfig] = None
-    max_ongoing_requests: Optional[int] = None
     ray_actor_options: Optional[Dict[str, Any]] = None
 
 

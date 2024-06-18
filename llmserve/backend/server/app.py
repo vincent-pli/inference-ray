@@ -675,20 +675,24 @@ class ExperimentalDeployment(GradioIngress):
 class VLLMDeployment:
     def __init__(
         self,
+        # test: str,
+        # model_configuration: dict,
         # config: Union[Dict[str, Any], Args]
         # engine_args: AsyncEngineArgs,
         # response_role: str,
         # lora_modules: Optional[List[LoRAModulePath]] = None,
         # chat_template: Optional[str] = None,
     ):
+        pass
         # logger.info(f"Starting with engine args: {engine_args}")
         # self.openai_serving_chat = None
         # self.engine_args = engine_args
         # self.response_role = response_role
         # self.lora_modules = lora_modules
         # self.chat_template = chat_template
-        logger.info("^^^^^^^^^^^^^^^^^^^^^^^^^")
-        logger.info("LLM Deployment Reconfiguring...")
+        # logger.info("^^^^^^^^^^^^^^^^^^^^^^^^^")
+        # logger.info(model_configuration)
+        # logger.info("LLM Deployment Reconfiguring...")
         # if not isinstance(config, Args):
         #     new_args: Args = Args.model_validate(config)
         # else:
@@ -698,7 +702,75 @@ class VLLMDeployment:
         # self.update_batch_params(
         #     self.get_max_batch_size(), self.get_batch_wait_timeout_s())
         
-        engine_args = self._get_vllm_engine_config()
+        # engine_args = self._get_vllm_engine_config()
+        # logger.info("******************")
+        # logger.info(engine_args)
+        # print("******************")
+        # print(engine_args)
+        
+        # self.engine = AsyncLLMEngine.from_engine_args(engine_args)
+
+
+        # model_config = await self.engine.get_model_config()
+        # # Determine the name of the served model for the OpenAI client.
+        # if self.engine_args.served_model_name is not None:
+        #     served_model_names = self.engine_args.served_model_name
+        # else:
+        #     served_model_names = [self.engine_args.model]
+        # self.openai_serving_chat = OpenAIServingChat(
+        #     self.engine, model_config, served_model_names, self.response_role, self.lora_modules, self.chat_template
+        # )
+        # logger.info("LLM Deployment Reconfigured.")
+
+    # def _get_vllm_engine_config(self, args: Args) -> AsyncEngineArgs:
+    def _get_vllm_engine_config(self, args: dict) -> AsyncEngineArgs:
+        # Generate engine arguements and engine configs
+        # model_id_or_path = get_model_location_on_disk(args.model_conf.actual_hf_model_id)
+        # new_args = Args.model_validate(args)
+        logger.info("666")
+        logger.info(args)
+        async_engine_args = AsyncEngineArgs(
+            # This is the local path on disk, or the hf model id
+            # If it is the hf_model_id, vllm automatically downloads the correct model.
+            **dict(
+                model=args.get("model_conf").get("model_id"),
+                # model="THUDM/chatglm3-6b",
+                worker_use_ray=True,
+                engine_use_ray=False,
+                tensor_parallel_size=args.get("scaling_config").get("num_workers"),
+                # tensor_parallel_size=2,
+                max_model_len=args.get("model_conf").get("max_input_words", 128),
+                # max_model_len=128,
+                disable_log_stats=False,
+                max_log_len=64,
+                # trust_remote_code=True,
+                # **args.model_conf.initialization.initializer.get_initializer_kwargs(),
+                **args.get("model_conf").get("initialization").get("initializer").get("from_pretrained_kwargs"),
+            )
+        )
+
+        return async_engine_args
+    
+    async def reconfigure(
+        self,
+        config: dict,
+        # config: Union[dict, Args],
+    ) -> None:
+        logger.info("^^^^^^^^^^^^^^^^^^^^^^^^^")
+        logger.info("LLM Deployment Reconfiguring...")
+        # if not isinstance(config, Args):
+        #     new_args: Args = Args.model_validate(config)
+        #     logger.info("1111111222222222")
+        # else:
+        #     new_args: Args = config
+
+        # self.args = new_args
+        # self.update_batch_params(
+        #     self.get_max_batch_size(), self.get_batch_wait_timeout_s())
+
+        # logger.info(type(new_args))
+        
+        engine_args = self._get_vllm_engine_config(config)
         logger.info("******************")
         logger.info(engine_args)
         print("******************")
@@ -715,66 +787,6 @@ class VLLMDeployment:
         #     self.engine, model_config, served_model_names, self.response_role, self.lora_modules, self.chat_template
         # )
         logger.info("LLM Deployment Reconfigured.")
-
-    # def _get_vllm_engine_config(self, args: Args) -> AsyncEngineArgs:
-    def _get_vllm_engine_config(self) -> AsyncEngineArgs:
-        # Generate engine arguements and engine configs
-        # model_id_or_path = get_model_location_on_disk(args.model_conf.actual_hf_model_id)
-
-        async_engine_args = AsyncEngineArgs(
-            # This is the local path on disk, or the hf model id
-            # If it is the hf_model_id, vllm automatically downloads the correct model.
-            **dict(
-                # model=args.model_conf.actual_hf_model_id,
-                model="THUDM/chatglm3-6b",
-                worker_use_ray=True,
-                engine_use_ray=False,
-                # tensor_parallel_size=args.scaling_config.num_workers,
-                tensor_parallel_size=2,
-                # max_model_len=args.model_conf.max_input_words,
-                max_model_len=128,
-                disable_log_stats=False,
-                max_log_len=64,
-                trust_remote_code=True,
-                # **args.model_conf.initialization.initializer.get_initializer_kwargs(),
-            )
-        )
-
-        return async_engine_args
-    
-    # async def reconfigure(
-    #     self,
-    #     config: Union[Dict[str, Any], Args],
-    #     force: bool = False,
-    # ) -> None:
-    #     logger.info("^^^^^^^^^^^^^^^^^^^^^^^^^")
-    #     logger.info("LLM Deployment Reconfiguring...")
-    #     if not isinstance(config, Args):
-    #         new_args: Args = Args.model_validate(config)
-    #     else:
-    #         new_args: Args = config
-
-    #     self.args = new_args
-    #     # self.update_batch_params(
-    #     #     self.get_max_batch_size(), self.get_batch_wait_timeout_s())
-        
-    #     engine_args = self._get_vllm_engine_config(self.args)
-    #     logger.info("******************")
-    #     logger.info(engine_args)
-    #     print("******************")
-    #     print(engine_args)
-        
-    #     self.engine = AsyncLLMEngine.from_engine_args(engine_args)
-    #     # model_config = await self.engine.get_model_config()
-    #     # # Determine the name of the served model for the OpenAI client.
-    #     # if self.engine_args.served_model_name is not None:
-    #     #     served_model_names = self.engine_args.served_model_name
-    #     # else:
-    #     #     served_model_names = [self.engine_args.model]
-    #     # self.openai_serving_chat = OpenAIServingChat(
-    #     #     self.engine, model_config, served_model_names, self.response_role, self.lora_modules, self.chat_template
-    #     # )
-    #     logger.info("LLM Deployment Reconfigured.")
     
     # async def create_chat_completion(
     #     self, request: ChatCompletionRequest, raw_request: Request
