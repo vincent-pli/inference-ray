@@ -701,8 +701,6 @@ class VLLMDeployment:
         # self.args = new_args
         # self.update_batch_params(
         #     self.get_max_batch_size(), self.get_batch_wait_timeout_s())
-        
-        # engine_args = self._get_vllm_engine_config()
         # logger.info("******************")
         # logger.info(engine_args)
         # print("******************")
@@ -721,12 +719,12 @@ class VLLMDeployment:
         #     self.engine, model_config, served_model_names, self.response_role, self.lora_modules, self.chat_template
         # )
         # logger.info("LLM Deployment Reconfigured.")
-
-    # def _get_vllm_engine_config(self, args: Args) -> AsyncEngineArgs:
+    
     def _get_vllm_engine_config(self, args: dict) -> AsyncEngineArgs:
         # Generate engine arguements and engine configs
         # model_id_or_path = get_model_location_on_disk(args.model_conf.actual_hf_model_id)
         # new_args = Args.model_validate(args)
+        # new_args = Args(args)
         logger.info("666")
         logger.info(args)
         async_engine_args = AsyncEngineArgs(
@@ -787,6 +785,32 @@ class VLLMDeployment:
         #     self.engine, model_config, served_model_names, self.response_role, self.lora_modules, self.chat_template
         # )
         logger.info("LLM Deployment Reconfigured.")
+        model_config = await self.engine.get_model_config()
+        # Determine the name of the served model for the OpenAI client.
+        # if self.engine_args.served_model_name is not None:
+        #     served_model_names = self.engine_args.served_model_name
+        # else:
+        #     served_model_names = [self.engine_args.model]
+
+        chat_template = config.get("model_conf").get("generation").get("prompt_format")
+        served_model_names = [engine_args.model]
+        logger.info(engine_args.model)
+
+        logger.info(type(self.engine))
+        logger.info(type(model_config))
+        logger.info(type(served_model_names))
+        logger.info(type(chat_template))
+
+        self.openai_serving_chat = OpenAIServingChat(
+            self.engine,
+            model_config,
+            served_model_names, 
+            "assistant",
+            None,
+            chat_template
+        )
+        # self.openai_serving_completion = OpenAIServingCompletion(
+        # engine, model_config, served_model_names, args.lora_modules)
     
     # async def create_chat_completion(
     #     self, request: ChatCompletionRequest, raw_request: Request

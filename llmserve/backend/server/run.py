@@ -71,64 +71,68 @@ def llm_server(args: Union[str, LLMApp, List[Union[LLMApp, str]]]):
         raise RuntimeError("No enabled models were found.")
 
     # For each model, create a deployment
-    deployments = {}
-    model_configs = {}
-    for model in models:
-        if model.model_conf.model_id in model_configs:
-            raise ValueError(
-                f"Duplicate model_id {model.model_conf.model_id} specified. "
-                "Please ensure that each model has a unique model_id. "
-                "If you want two models to share the same Hugging Face Hub ID, "
-                "specify initialization.hf_model_id in the model config."
-            )
-        logger.info(f"Initializing LLM app {model.model_dump_json(indent=2)}")
-        # user_config is one of the parameter for ray.deployment.option(), it will trigger reconfigure() in the ray deplyment 
-        # and set user_config as it's param
-        user_config = model.model_dump()
-        deployment_config = model.deployment_config.model_dump()
-        model_configs[model.model_conf.model_id] = model
-        deployment_config = deployment_config.copy()
+    # deployments = {}
+    # model_configs = {}
+    from ray.serve.handle import DeploymentHandle
+    deployment: DeploymentHandle
+    model = models[0]
+    # for model in models:
+    # if model.model_conf.model_id in model_configs:
+    #     raise ValueError(
+    #         f"Duplicate model_id {model.model_conf.model_id} specified. "
+    #         "Please ensure that each model has a unique model_id. "
+    #         "If you want two models to share the same Hugging Face Hub ID, "
+    #         "specify initialization.hf_model_id in the model config."
+    #     )
+    logger.info(f"Initializing LLM app {model.model_dump_json(indent=2)}")
+    # user_config is one of the parameter for ray.deployment.option(), it will trigger reconfigure() in the ray deplyment 
+    # and set user_config as it's param
+    user_config = model.model_dump()
+    deployment_config = model.deployment_config.model_dump()
+    # model_configs[model.model_conf.model_id] = model
+    deployment_config = deployment_config.copy()
 
-        # if user_config.get("model_config", {}).get("initialization", {}).get("initializer", {}).get("type", None) == "Vllm" and user_config.get("model_config", {}).get("initialization", {}).get("runtime_env", None):
-        #     deployment_config["ray_actor_options"]["runtime_env"] = user_config.get("model_config", {}).get("initialization", {}).get("runtime_env", None)
-        # max_ongoing_requests = deployment_config.pop(
-        #     "max_ongoing_requests", None
-        # ) or user_config.get("model_conf", {}).get("generation", {}).get("max_batch_size", 1)
-        import math
-        max_ongoing_requests = math.ceil(model.deployment_config.autoscaling_config.target_ongoing_requests * 1.2)
-        # deployment_config.pop("ray_actor_options")
-        # tp = model.scaling_config.num_workers
-        # logger.info(f"Tensor parallelism = {tp}")
-        # pg_resources = []
-        # pg_resources.append({"CPU": 1})  # for the deployment replica
-        # for i in range(tp):
-        #     pg_resources.append({"CPU": 1, "GPU": 1})  # for the vLLM actors
-        if model.model_conf.initialization.initializer.type == "Vllm":
-            deployment_config.pop("ray_actor_options")
-            tp = model.scaling_config.num_workers
-            logger.info(f"Tensor parallelism = {tp}")
-            pg_resources = []
-            pg_resources.append({"CPU": 1})  # for the deployment replica
-            for i in range(tp):
-                pg_resources.append({"CPU": 1, "GPU": 1})  # for the vLLM actors
+    # if user_config.get("model_config", {}).get("initialization", {}).get("initializer", {}).get("type", None) == "Vllm" and user_config.get("model_config", {}).get("initialization", {}).get("runtime_env", None):
+    #     deployment_config["ray_actor_options"]["runtime_env"] = user_config.get("model_config", {}).get("initialization", {}).get("runtime_env", None)
+    # max_ongoing_requests = deployment_config.pop(
+    #     "max_ongoing_requests", None
+    # ) or user_config.get("model_conf", {}).get("generation", {}).get("max_batch_size", 1)
+    import math
+    max_ongoing_requests = math.ceil(model.deployment_config.autoscaling_config.target_ongoing_requests * 1.2)
+    # deployment_config.pop("ray_actor_options")
+    # tp = model.scaling_config.num_workers
+    # logger.info(f"Tensor parallelism = {tp}")
+    # pg_resources = []
+    # pg_resources.append({"CPU": 1})  # for the deployment replica
+    # for i in range(tp):
+    #     pg_resources.append({"CPU": 1, "GPU": 1})  # for the vLLM actors
+    if model.model_conf.initialization.initializer.type == "Vllm":
+        deployment_config.pop("ray_actor_options")
+        tp = model.scaling_config.num_workers
+        logger.info(f"Tensor parallelism = {tp}")
+        pg_resources = []
+        pg_resources.append({"CPU": 1})  # for the deployment replica
+        for i in range(tp):
+            pg_resources.append({"CPU": 1, "GPU": 1})  # for the vLLM actors
 
-            deployments[model.model_conf.model_id] = VLLMDeployment.options(
-                placement_group_bundles=pg_resources, 
-                placement_group_strategy="STRICT_PACK",
-                name=_reverse_prefix(model.model_conf.model_id),
-                max_ongoing_requests=max_ongoing_requests,
-                user_config=user_config,
-                **deployment_config,
-            ).bind()
-            # return deployments[model.model_conf.model_id]
-        else:
-            deployments[model.model_conf.model_id] = LLMDeployment.options(  # pylint:disable=no-member
-                name=_reverse_prefix(model.model_conf.model_id),
-                max_ongoing_requests=max_ongoing_requests,
-                user_config=user_config,
-                **deployment_config,
-            ).bind()
+        deployment = VLLMDeployment.options(
+            placement_group_bundles=pg_resources, 
+            placement_group_strategy="STRICT_PACK",
+            name=_reverse_prefix(model.model_conf.model_id),
+            max_ongoing_requests=max_ongoing_requests,
+            user_config=user_config,
+            **deployment_config,
+        ).bind()
+        # return deployments[model.model_conf.model_id]
+    else:
+        deployment = LLMDeployment.options(  # pylint:disable=no-member
+            name=_reverse_prefix(model.model_conf.model_id),
+            max_ongoing_requests=max_ongoing_requests,
+            user_config=user_config,
+            **deployment_config,
+        ).bind()
 
+    return deployment
     return RouterDeployment.options(
         name=('+'.join([_reverse_prefix(model.model_conf.model_id) for model in models])) + "-router",
     ).bind(deployments, model_configs)  # pylint:disable=no-member
